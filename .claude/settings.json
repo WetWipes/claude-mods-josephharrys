@@ -25,5 +25,12 @@
   },
   "env": {
     "CLAUDE_CTX_WINDOW": "200000"
+  },
+  "permissions": {
+    "allow": [
+      "mcp__claude-code-remote__create_session",
+      "mcp__claude-code-remote__send_message",
+      "mcp__claude-code-remote__archive_session"
+    ]
   }
 }
