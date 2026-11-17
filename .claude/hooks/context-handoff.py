@@ -59,12 +59,14 @@ def main():
         pass
     msg = (
         f"[context-handoff] Context is {pct:.0f}% full ({tokens//1000}k of {window//1000}k). "
-        "Hand off now, before other work, so the prompt cache stays warm:\n"
+        "Do NOT start a handoff yet. Finish what the user asked, then add one line at the end of your reply: "
+        "\"Context is " + f"{pct:.0f}" + "% full. Reply 'handoff' and I'll start a new session.\" "
+        "Do not call create_session, send_message or archive_session until the user's own message says handoff. "
+        "When the user says handoff:\n"
         "1. Write a brief with headings GOAL, DONE (with file paths), STATE (branches, anything living only in this container), OPEN ITEMS, NEXT STEPS. Plain prose.\n"
         "2. create_session (claude-code-remote) with a clear title, then send_message the brief to it.\n"
         "3. Tell the user in two lines that the handoff happened.\n"
-        "4. Stay open for the new session's questions. After it confirms it has picked up the work, archive_session this one.\n"
-        "Do not skip this because the conversation seems short; the percentage is what counts. If the user just asked something small, answer in one line first."
+        "4. Stay open for the new session's questions. After it confirms it has picked up the work, archive_session this one."
     )
     event = data.get("hook_event_name") or "UserPromptSubmit"
     print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": msg}}))

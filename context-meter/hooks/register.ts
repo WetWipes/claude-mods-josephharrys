@@ -7,12 +7,11 @@ const REPEAT = 5
 
 const fmt = (n: number) => (n >= 1000 ? `${Math.round(n / 1000)}k` : `${n}`)
 
-const PROTOCOL = (pct: number) => `[context-meter] This session's context is ${pct}% full, past the ${HANDOFF}% handoff line. Hand off now, before doing anything else the user asked for next, so the prompt cache stays warm:
-1. Write a short handoff brief with these headings: GOAL (what the user is after), DONE (what is finished, with file paths), STATE (branches, running things, anything that lives only in this container), OPEN ITEMS (questions waiting on the user, decisions pending), NEXT STEPS (ordered). Plain prose, no filler.
-2. Start the new session with create_session (claude-code-remote). Give it a clear title. Then send_message the brief to it.
-3. Tell the user in two lines that the handoff happened and which session took over.
-4. Stay open for questions from the new session. Once it confirms it has picked up the work, archive_session this one.
-If the user has just asked something small, answer it in one line first, then hand off.`
+const PROTOCOL = (pct: number) => `[context-meter] This session's context is ${pct}% full, past the ${HANDOFF}% handoff line. Do NOT start a handoff yet. Finish what the user asked, then end your reply with one line: "Context is ${pct}% full. Reply 'handoff' and I'll start a new session." Do not call create_session, send_message or archive_session until the user's own message says handoff. When they do:
+1. Write a short brief with these headings: GOAL, DONE (with file paths), STATE (branches, anything that lives only in this container), OPEN ITEMS, NEXT STEPS. Plain prose, no filler.
+2. create_session (claude-code-remote) with a clear title, then send_message the brief to it.
+3. Tell the user in two lines that the handoff happened.
+4. Stay open for the new session's questions. Once it confirms it has picked up the work, archive_session this one.`
 
 export const register: Register = on => {
   let percent = 0
@@ -31,7 +30,7 @@ export const register: Register = on => {
     $.ui.status(`ctx ${p}% (${fmt(tokens)}/${fmt(window)})${p >= HANDOFF ? ' - handoff due' : ''}`)
 
     if (p >= HANDOFF && (lastNag === 0 || p >= lastNag + REPEAT)) {
-      $.ui.toast(`Context is ${p}% full. Handing off to a new session.`)
+      $.ui.toast(`Context is ${p}% full. Reply 'handoff' to move to a new session.`)
     }
 
     return next(e)

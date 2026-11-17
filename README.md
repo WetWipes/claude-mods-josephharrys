@@ -20,4 +20,7 @@ docs/OUTPUT_STYLE.md is a short built-in version. For the full thing, install th
 
 ## No plugin support? Use the hook
 
-Where `/plugin` isn't available (web app, cloud sessions), `.claude/settings.json` registers `.claude/hooks/context-handoff.py`. Any session with this repo attached loads it. At 25% context it tells Claude to hand off to a new session. Change the line with `HANDOFF_PCT`; set `CLAUDE_CTX_WINDOW` (tokens) if the window guess is wrong. It can't draw a status line; the plugin does that.
+Where `/plugin` isn't available (web app, cloud sessions), `.claude/settings.json` registers `.claude/hooks/context-handoff.py`. Any session with this repo attached loads it. At 25% context it makes Claude ask you; reply `handoff` and it writes the brief, starts a new session and archives the old one. (Auto mode blocks sessions that a hook starts on its own, so your reply is what authorises it.) Change the line with `HANDOFF_PCT`; set `CLAUDE_CTX_WINDOW` (tokens) if the window guess is wrong. It can't draw a status line; the plugin does that.
+
+
+If your model's window isn't 1M, change `CLAUDE_CTX_WINDOW` in `.claude/settings.json` (tokens, e.g. 200000).
