@@ -17,3 +17,7 @@ Change the threshold with the `HANDOFF` constant in `context-meter/hooks/registe
 docs/OUTPUT_STYLE.md is a short built-in version. For the full thing, install the third-party plugin yourself:
 
 `claude plugin marketplace add JuliusBrussee/caveman` then `claude plugin install caveman@caveman`
+
+## No plugin support? Use the hook
+
+Where `/plugin` isn't available (web app, cloud sessions), `.claude/settings.json` registers `.claude/hooks/context-handoff.py`. Any session with this repo attached loads it. At 25% context it tells Claude to hand off to a new session. Change the line with `HANDOFF_PCT`; set `CLAUDE_CTX_WINDOW` (tokens) if the window guess is wrong. It can't draw a status line; the plugin does that.
