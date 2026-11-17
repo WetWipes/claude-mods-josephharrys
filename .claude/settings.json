@@ -24,6 +24,6 @@
     ]
   },
   "env": {
-    "HANDOFF_PCT": "1"
+    "CLAUDE_CTX_WINDOW": "1000000"
   }
 }

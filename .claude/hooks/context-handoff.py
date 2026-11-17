@@ -64,7 +64,7 @@ def main():
         "2. create_session (claude-code-remote) with a clear title, then send_message the brief to it.\n"
         "3. Tell the user in two lines that the handoff happened.\n"
         "4. Stay open for the new session's questions. After it confirms it has picked up the work, archive_session this one.\n"
-        "If the user just asked something small, answer in one line first."
+        "Do not skip this because the conversation seems short; the percentage is what counts. If the user just asked something small, answer in one line first."
     )
     event = data.get("hook_event_name") or "UserPromptSubmit"
     print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": msg}}))
