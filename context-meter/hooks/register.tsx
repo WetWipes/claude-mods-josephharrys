@@ -1,4 +1,8 @@
+import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
+
+// The meter's text, for the band above the prompt.
+const band = atom({ plugin: 'context-meter', key: 'line' } as const, '')
 
 // Percent of the window at which the handoff kicks in.
 const HANDOFF = 25
@@ -17,7 +21,7 @@ export const register: Register = on => {
   let percent = 0
   let lastNag = 0
 
-  on('session.measure', ($, e, next) => {
+  on('session.measure', async ($, e, next) => {
     const { tokens, window, percent: p } = e.context
 
     if (tokens === undefined || p === undefined) {
@@ -27,13 +31,33 @@ export const register: Register = on => {
     percent = p
     if (p < lastNag) lastNag = 0 // compaction or /clear
 
-    $.ui.status(`ctx ${p}% (${fmt(tokens)}/${fmt(window)})${p >= HANDOFF ? ' - handoff due' : ''}`)
+    const text = `ctx ${p}% (${fmt(tokens)}/${fmt(window)})${p >= HANDOFF ? ' - handoff due' : ''}`
+    $.ui.status(text)
 
     if (p >= HANDOFF && (lastNag === 0 || p >= lastNag + REPEAT)) {
       $.ui.toast(`Context is ${p}% full. Reply 'handoff' to move to a new session.`)
     }
 
+    await update($, band, () => text)
+
     return next(e)
+  })
+
+  // The same text as a one-row band above the prompt.
+  on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    const text = await read($, band)
+
+    if (e.props.hasSurvey || !text) {
+      return next(e)
+    }
+
+    const { Box, Text } = $.ui.resolve(e)
+
+    return (
+      <Box>
+        <Text dimColor wrap="truncate-end">{text}</Text>
+      </Box>
+    )
   })
 
   // Attach the handoff instructions to the user's next prompt. This goes in
