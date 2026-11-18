@@ -55,7 +55,7 @@ export const register: Register = on => {
 
     return (
       <Box>
-        <Text dimColor>{text}</Text>
+        <Text dimColor wrap="truncate-end">{text}</Text>
       </Box>
     )
   })
