@@ -2,6 +2,6 @@
   "name": "claude-mods-josephharrys",
   "owner": { "name": "Joseph" },
   "plugins": [
-    { "name": "context-meter", "source": "./context-meter", "description": "Context fill in the status line, with an automatic handoff to a new session at 25%." }
+    { "name": "context-meter", "source": "./context-meter", "description": "Context fill in the status line and a band above the prompt, with an automatic handoff to a new session at 25%." }
   ]
 }
